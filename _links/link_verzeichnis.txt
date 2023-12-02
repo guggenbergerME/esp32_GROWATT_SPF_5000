@@ -1,0 +1,3 @@
+https://embeddedthere.com/how-to-interface-esp32-with-rs485-modbus-sensors-with-example-code/
+
+
