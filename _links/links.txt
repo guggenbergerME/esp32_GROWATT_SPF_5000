@@ -1,0 +1,9 @@
+https://gist.github.com/tenergyinnovation/625739495449512bedf2ef26c9fc6a27
+
+https://github.com/trucki-eu/RS485-Interface-for-Sun-GTIL2-1000
+
+https://github.com/EvertDekker/Pzem016Test/blob/master/Pzem016Test.ino
+
+
+Quellcode
+https://www.akkudoktor.net/forum/panels-wechselrichter-laderegler/soyosource-gtn-1000-1200-register-protokoll/
