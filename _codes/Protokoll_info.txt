@@ -1,0 +1,11 @@
+RJ-45 Anschluss PIN-Out
+Pin 1 orange/weiss (B-)
+Pin 5 blau/weiss (A+)
+9600 bytes
+8 bits
+1 Stopbit
+No Parity
+Modbus-RTU Protocol
+
+Function-Code 03 mit Registers von 1000 - 1124
+

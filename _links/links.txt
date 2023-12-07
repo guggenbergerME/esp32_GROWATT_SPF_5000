@@ -7,3 +7,5 @@ https://github.com/EvertDekker/Pzem016Test/blob/master/Pzem016Test.ino
 
 Quellcode
 https://www.akkudoktor.net/forum/panels-wechselrichter-laderegler/soyosource-gtn-1000-1200-register-protokoll/
+
+https://forum.arduino.cc/t/pv-wechselrichter-auslesen/1024587/17
