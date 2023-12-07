@@ -5,3 +5,16 @@ growatt2lorawan
 https://github.com/matthias-bs/growatt2lorawan
 
 
+https://ipc2u.de/artikel/wissenswertes/modbus-rtu-einfach-gemacht-mit-detaillierten-beschreibungen-und-beispielen/#:~:text=Die%20Modbus%2DNachricht%20verwendet%20die,%2C%2010001%2C%2030001%20und%2040001.
+
+
+
+https://www.libe.net/esp32-flowmeter-rs485-modbus
+
+
+https://www.libe.net/esp32-flowmeter-rs485-modbus
+
+
+
+socat  /dev/ttyUSB1,raw,echo=0  \
+    SYSTEM:'tee in.txt | socat - "PTY,link=/tmp/ttyUSB1,raw,echo=0,waitslave" | tee out.txt'

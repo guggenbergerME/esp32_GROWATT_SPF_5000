@@ -4,12 +4,12 @@
 
 /* Modbus stuff */
 #define MODBUS_DIR_PIN  4 // connect DR, RE pin of MAX485 to gpio 4
-#define MODBUS_RX_PIN 16 // Rx pin - RO 
-#define MODBUS_TX_PIN 17 // Tx pin - DI
+#define MODBUS_RX_PIN 18 // Rx pin  
+#define MODBUS_TX_PIN 19 // Tx pin 
 #define MODBUS_SERIAL_BAUD 9600 // Baud rate for esp32 and max485 communication
 
 // voltage, current and frequency data register of DDM18SD
-uint16_t data_register[3] = {0x0000, 0x1000, 0x2000};
+uint16_t data_register[3] = {0x0000, 0x0008, 0x002A};
 
 //Initialize the ModbusMaster object as node
 ModbusMaster node;
@@ -39,7 +39,7 @@ void setup()
   Serial2.begin(MODBUS_SERIAL_BAUD, SERIAL_8E1, MODBUS_RX_PIN, MODBUS_TX_PIN);
   Serial2.setTimeout(200);
   //modbus slave ID 14
-  node.begin(1, Serial2);
+  node.begin(14, Serial2);
 
 //  callbacks allow us to configure the RS485 transceiver correctly
    node.preTransmission(modbusPreTransmission);
@@ -53,14 +53,7 @@ void loop()
     uint16_t data[2];
     int i;
     float reading;
-
-for(i=0; i<=2; i++){
-Serial.print(node.readInputRegisters(data_register[i], 1));
-delay(200);
-Serial.println(" ...");
-}
-/*
-    for(i=0; i<=2; i++){
+    for(i=0; i<=10; i++){
       //Modbus function 0x04 Read Input Registers according to energy meter datasheet
       result = node.readInputRegisters(data_register[i], 1);
         if (result == node.ku8MBSuccess) {
@@ -104,6 +97,6 @@ Serial.println(" ...");
         }
       
     }
-*/
+
     delay(1000);
   }
