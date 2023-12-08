@@ -7,12 +7,6 @@ RE (Receiver Enable Input)  4
 RO (Receiver Output)        18 rx
 
 
-Register Anzeigen
-
-Die Adresse des ersten Registers (40108-40001 = 107 = 6B hex) - > reg = 0x006B;
-Die Anzahl X der erforderlichen Register (lesen 3 Register von 40108 bis 40110)
--> serverA.readInputRegisters(reg, X);
-
 */
 #include <Arduino.h>
 /*
@@ -82,29 +76,17 @@ void requestData()
     switch (actual)
     {
       case 0 :
-        reg = 0x0012;
-        result = serverA.readInputRegisters(reg, 16);
+        reg = 0x03;
+        result = serverA.readInputRegisters(reg, 8);
         if (result == serverA.ku8MBSuccess) // do something if read is successfull
         {
-          Serial.println(F(" "));
-          Serial.print(F("1 - ")); Serial.print(serverA.getResponseBuffer(0x00), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x00));
-          Serial.print(F("2 - ")); Serial.print(serverA.getResponseBuffer(0x01), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x01));
-          Serial.print(F("3 - ")); Serial.print(serverA.getResponseBuffer(0x02), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x02));
-          Serial.print(F("4 - ")); Serial.print(serverA.getResponseBuffer(0x03), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x03));
-          Serial.print(F("5 - ")); Serial.print(serverA.getResponseBuffer(0x04), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x04));
-          Serial.print(F("6 - ")); Serial.print(serverA.getResponseBuffer(0x05), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x05));
-          Serial.print(F("7 - ")); Serial.print(serverA.getResponseBuffer(0x06), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x06));
-          Serial.print(F("8 - ")); Serial.print(serverA.getResponseBuffer(0x07), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x07));
-          
-          Serial.print(F("9 - ")); Serial.print(serverA.getResponseBuffer(0x08), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x08));
-          Serial.print(F("10- ")); Serial.print(serverA.getResponseBuffer(0x09), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x09));
-          Serial.print(F("11- ")); Serial.print(serverA.getResponseBuffer(0x0A), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0A));
-          Serial.print(F("12- ")); Serial.print(serverA.getResponseBuffer(0x0B), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0B));
-          Serial.print(F("13- ")); Serial.print(serverA.getResponseBuffer(0x0C), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0C));
-          Serial.print(F("14- ")); Serial.print(serverA.getResponseBuffer(0x0D), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0D));
-          Serial.print(F("15- ")); Serial.print(serverA.getResponseBuffer(0x0E), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0E));
-          Serial.print(F("16- ")); Serial.print(serverA.getResponseBuffer(0x0F), HEX);Serial.print(" -> ");Serial.println(serverA.getResponseBuffer(0x0F));
-          
+          Serial.print(reg, HEX); Serial.println("********************************************");
+          Serial.print(F("Charging equipment input V:     ")); Serial.println(serverA.getResponseBuffer(0x00) / 100.0f);
+          Serial.print(F("Charging equipment input A:     ")); Serial.println(serverA.getResponseBuffer(0x01) / 100.0f);
+          Serial.print(F("Charging equipment input W:     ")); Serial.println((serverA.getResponseBuffer(0x02) + ((uint32_t)serverA.getResponseBuffer(0x03) << 16)) / 100.0f); // cast and brackets
+          Serial.print(F("Charging equipment output V:    ")); Serial.println(serverA.getResponseBuffer(0x04) / 100.0f);
+          Serial.print(F("Charging equipment output A:    ")); Serial.println(serverA.getResponseBuffer(0x05) / 100.0f);
+          Serial.print(F("Charging equipment output W:    ")); Serial.println((serverA.getResponseBuffer(0x06) + ((uint32_t)serverA.getResponseBuffer(0x07) << 16)) / 100.0f); // cast and brackets
         }
         else
         {
@@ -112,7 +94,7 @@ void requestData()
         }
         actual++;
         break;
-/*
+
       case 1 :
         reg = 0x031;
         result = serverA.readInputRegisters(reg, 7);
@@ -132,7 +114,27 @@ void requestData()
         }
         actual++;
         break;
-*/
+
+      case 2 :
+        reg = 0x032;
+        result = serverA.readInputRegisters(reg, 7);
+        if (result == serverA.ku8MBSuccess) // do something if read is successfull
+        {
+          Serial.print(reg, HEX); Serial.println("********************************************");
+          Serial.print(F("Charging equipment input V:     ")); Serial.println(serverA.getResponseBuffer(0x00 - reg) / 100.0f);
+          Serial.print(F("Charging equipment input A:     ")); Serial.println(serverA.getResponseBuffer(0x01 - reg) / 100.0f);
+          Serial.print(F("Charging equipment input W:     ")); Serial.println((serverA.getResponseBuffer(0x02 - reg) + ((uint32_t)serverA.getResponseBuffer(0x310F - reg) << 16)) / 100.0f); // cast and brackets
+          Serial.print(F("Battery Temperature:            ")); Serial.println(serverA.getResponseBuffer(0x03 - reg) / 100.0f);
+          Serial.print(F("Temperature inside equipment:   ")); Serial.println(serverA.getResponseBuffer(0x04 - reg) / 100.0f);
+          Serial.print(F("Power components temperature:   ")); Serial.println(serverA.getResponseBuffer(0x05 - reg) / 100.0f);
+        }
+        else
+        {
+          Serial.print(F(" ServerA no success register ")); Serial.print(reg, HEX); Serial.print(F(" result=")); Serial.println(result, HEX);
+        }
+        actual++;
+        break;
+
 
           default : actual = 0;
     } // switch
@@ -140,7 +142,55 @@ void requestData()
 }
 
 
+// Parameters don't change so often, we only read them once after startup
+// preTransmission and postTransmission take care of the requested "delay" between requests
+void requestParameter()
+{
+  uint16_t reg;
+  int result;
 
+  reg = 0x3000;
+  result = serverA.readInputRegisters(reg, 8);
+  if (result == serverA.ku8MBSuccess) // do something if read is successfull
+  {
+    Serial.print(F("Charging equipment rated input V: ")); Serial.println(serverA.getResponseBuffer(0x00) / 100.0f);
+    Serial.print(F("Charging equipment rated input A: ")); Serial.println(serverA.getResponseBuffer(0x01) / 100.0f);
+    Serial.print(F("Charging equipment rated input W: ")); Serial.println((serverA.getResponseBuffer(0x02) + ((uint32_t)serverA.getResponseBuffer(0x03) << 16)) / 100.0f); // cast and brackets
+    Serial.print(F("Charging equipment rated output V:")); Serial.println(serverA.getResponseBuffer(0x04) / 100.0f);
+    Serial.print(F("Charging equipment rated output A:")); Serial.println(serverA.getResponseBuffer(0x05) / 100.0f);
+    Serial.print(F("Charging equipment rated output W:")); Serial.println((serverA.getResponseBuffer(0x06) + ((uint32_t)serverA.getResponseBuffer(0x07) << 16)) / 100.0f); // cast and brackets
+    Serial.print(F("Charging mode:                    ")); Serial.println(serverA.getResponseBuffer(0x08));
+  }
+  else
+  {
+    Serial.print(F(" ServerA no success register ")); Serial.print(reg, HEX); Serial.print(F(" result=")); Serial.println(result, HEX);
+  }
+  
+  reg = 0x2;
+  result = serverA.readCoils(reg, 1);
+  if (result == serverA.ku8MBSuccess)
+  {
+    Serial.print(F("Manual control the load:        ")); Serial.println(serverA.getResponseBuffer(0x2 - reg));
+  }
+  else
+  {
+    Serial.print(F(" ServerA no success register ")); Serial.print(reg, HEX); Serial.print(F(" result=")); Serial.println(result, HEX);
+  }
+
+  reg = 0x5;
+  result = serverA.readCoils(reg, 2);
+  if (result == serverA.ku8MBSuccess)
+  {
+    Serial.print(F("Enable load test mode:          ")); Serial.println(serverA.getResponseBuffer(0x5 - reg));
+    Serial.print(F("Force the load on/off:          ")); Serial.println(serverA.getResponseBuffer(0x6 - reg));
+  }
+  else
+  {
+    Serial.print(F(" ServerA no success register ")); Serial.print(reg, HEX); Serial.print(F(" result=")); Serial.println(result, HEX);
+  }
+
+
+}
 
 /* **************************************************** *
    setup and loop
@@ -152,6 +202,7 @@ void setup()
   Serial.println(F("Modbus Client Example 0x60"));
 
   modbusInit();
+  //requestParameter();
 }
 
 void loop()
