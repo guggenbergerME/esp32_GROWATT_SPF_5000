@@ -13,6 +13,8 @@ Die Adresse des ersten Registers (40108-40001 = 107 = 6B hex) - > reg = 0x006B;
 Die Anzahl X der erforderlichen Register (lesen 3 Register von 40108 bis 40110)
 -> serverA.readInputRegisters(reg, X);
 
+Holding Reg - readHoldingRegisters
+
 */
 #include <Arduino.h>
 /*
@@ -77,13 +79,13 @@ void requestData()
   if (currentMillis - previousMillis > 5000)  // set the interval in ms
   {
     previousMillis = currentMillis;
-    uint16_t reg = 0x03;
+    uint16_t reg;
     int result;
     switch (actual)
     {
       case 0 :
-        reg = 0x0012;
-        result = serverA.readInputRegisters(reg, 16);
+        reg = 0x0015;
+        result = serverA.readHoldingRegisters(reg, 16);
         if (result == serverA.ku8MBSuccess) // do something if read is successfull
         {
           Serial.println(F(" "));
